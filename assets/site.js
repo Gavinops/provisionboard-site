@@ -8,10 +8,14 @@
   const b = document.querySelector('.menu'), n = document.getElementById('links');
   b.addEventListener('click', () => { const o = n.classList.toggle('open'); b.setAttribute('aria-expanded', o); });
   n.addEventListener('click', e => { if (e.target.tagName === 'A') { n.classList.remove('open'); b.setAttribute('aria-expanded', 'false'); } });
+  const closeMenu = () => { n.classList.remove('open'); b.setAttribute('aria-expanded', 'false'); };
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && n.classList.contains('open')) { closeMenu(); b.focus(); } });
+  document.addEventListener('click', e => { if (!e.target.closest('.nav')) closeMenu(); });
+  addEventListener('resize', () => { if (innerWidth > 1180) closeMenu(); });
   // active nav
   const links = [...n.querySelectorAll('a')], secs = links.map(a => document.querySelector(a.getAttribute('href')));
-  const so = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) links.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + x.target.id)); }), { rootMargin: '-45% 0px -50% 0px' });
-  secs.forEach(s => s && so.observe(s));
+  if ('IntersectionObserver' in window) { const so = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) links.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + x.target.id)); }), { rootMargin: '-45% 0px -50% 0px' });
+  secs.forEach(s => s && so.observe(s)); }
   // gentle parallax on phone media (desktop, motion allowed)
   if (rm) return; const media = [...document.querySelectorAll('.media')]; let tick = false;
   const run = () => { tick = false; if (innerWidth < 820) return; const h = innerHeight; media.forEach(m => { const r = m.getBoundingClientRect(); if (r.bottom < 0 || r.top > h) return; m.style.setProperty('--py', ((r.top + r.height / 2 - h / 2) * -0.06).toFixed(1) + 'px'); }); };
